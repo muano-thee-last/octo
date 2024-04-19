@@ -1,17 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="styles.css">
-  <title>Vanilla JavaScript App</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Test</title>
 </head>
-
 <body>
-  <main>
-    <h1>Az'khale!!!</h1>
-  </main>
-</body>
+    <h1>API Test</h1>
+    <div id="output"></div>
+    
+    <button onclick="getAllApplicants()">Get All Applicants</button>
+    <button onclick="getApplicantById('2678890')">Get Applicant by ID</button>
+    <button onclick="addApplicant()">Add New Applicant</button>
+    <button onclick="updateApplicant('2678893')">Update Applicant</button>
+    <button onclick="deleteApplicant('2678891')">Delete Applicant</button>
 
+    
+    <script>
+        // Function to make GET request to retrieve all applicants
+        function getAllApplicants() {
+            fetch('/applicants')
+            .then(response => response.json())
+            .then(data => {
+                console.log('All Applicants:', data);
+                document.getElementById('output').innerHTML = JSON.stringify(data, null, 2);
+            })
+            .catch(error => console.error('Error fetching applicants:', error));
+        }
+
+        // Function to make GET request to retrieve a single applicant by ID
+        function getApplicantById(id) {
+            fetch(`/applicants/${id}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log(`Applicant with ID ${id}:`, data);
+                document.getElementById('output').innerHTML = JSON.stringify(data, null, 2);
+            })
+            .catch(error => console.error(`Error fetching applicant with ID ${id}:`, error));
+        }
+
+        // Function to make POST request to add a new applicant
+        function addApplicant() {
+            const newApplicant = {
+                id: '2678893',
+                firstname: 'John',
+                surname: 'Doe',
+                institution: 'Harvard',
+                status: 'Pending',
+                motivation: 'Passionate about learning'
+            };
+
+            fetch('/applicants', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(newApplicant),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('New Applicant Added:', data);
+                document.getElementById('output').innerHTML = JSON.stringify(data, null, 2);
+            })
+            .catch(error => console.error('Error adding new applicant:', error));
+        }
+
+        // Function to make PUT request to update an existing applicant by ID
+        function updateApplicant(id) {
+            const updatedApplicant = {
+                id: id,
+                firstname: 'Jane',
+                surname: 'Smith',
+                institution: 'Stanford',
+                status: 'Accepted',
+                motivation: 'Excited to contribute'
+            };
+
+            fetch(`/applicants/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(updatedApplicant),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(`Applicant with ID ${id} Updated:`, data);
+                document.getElementById('output').innerHTML = JSON.stringify(data, null, 2);
+            })
+            .catch(error => console.error(`Error updating applicant with ID ${id}:`, error));
+        }
+
+        // Function to make DELETE request to delete an applicant by ID
+        function deleteApplicant(id) {
+            fetch(`/applicants/${id}`, {
+                method: 'DELETE',
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log(`Applicant with ID ${id} Deleted`);
+                    document.getElementById('output').innerHTML = `Applicant with ID ${id} Deleted`;
+                } else {
+                    console.error(`Error deleting applicant with ID ${id}`);
+                    document.getElementById('output').innerHTML = `Error deleting applicant with ID ${id}`;
+                }
+            })
+            .catch(error => console.error(`Error deleting applicant with ID ${id}:`, error));
+        }
+    </script>
+</body>
 </html>
